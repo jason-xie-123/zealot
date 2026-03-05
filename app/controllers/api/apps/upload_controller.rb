@@ -123,7 +123,8 @@ class Api::Apps::UploadController < Api::BaseController
   def release_params
     params.permit(
       :file, :release_type, :source, :branch, :git_commit,
-      :ci_url, :changelog, :devices, :custom_fields
+      :ci_url, :changelog, :devices, :custom_fields,
+      :release_version, :build_version
     )
   end
 

@@ -7,7 +7,7 @@ x-restart-policy: &restart_policy
 
 x-defaults: &defaults
   <<: *restart_policy
-  image: ghcr.io/tryzealot/zealot:5.3.7
+  image: ghcr.io/jason-xie-123/zealot:5.3.7-official-rebuild
   depends_on:
   - postgres
   env_file: .env

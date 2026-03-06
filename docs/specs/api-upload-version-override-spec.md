@@ -7,6 +7,15 @@
 ## 1. Background
 `/api/apps/upload` 在上传 `.dmg` 等文件时，版本信息可能无法从 parser 稳定解析。为保证上传链路可控，需要允许调用方显式传入 `release_version/build_version`。
 
+### 1.1 Why DMG Cannot Show Release/Build Version in Upload List
+- Zealot 的上传元数据解析依赖 `AppInfo.parse(file)` 自动识别文件格式并提取 `release_version/build_version`。
+- 当前解析链路（`app-info` gem）主要覆盖：`apk/aab/ipa/mobileprovision/provisionprofile/app.zip/dSYM.zip/exe/zip(内含exe)` 及新版本的 HarmonyOS 包格式。
+- `dmg` 是磁盘镜像容器，不在现有解析分支中；当前链路未实现“挂载 dmg -> 读取内部 `.app` -> 提取 `Info.plist`”流程，因此无法自动得出版本号。
+- 在 Zealot 当前使用版本 `5.3.7` 下，`/api/apps/upload` 仍以自动解析为主（无直接稳定的版本字段覆盖能力是本需求要解决的问题）。
+- 这导致：
+  - API 上传 `dmg`：常见结果是 `release_version/build_version = null`
+  - 后台手动上传：可人工填写版本字段并展示（Web 表单路径允许填写）
+
 ## 2. Goal
 为 `/api/apps/upload` 提供可选版本覆盖能力，规则为：
 - 手动传值优先

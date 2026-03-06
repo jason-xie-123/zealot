@@ -105,3 +105,50 @@ curl -X POST "https://<host>/api/apps/upload" \
   -F "release_version=9.9.9" \
   -F "build_version=999"
 ```
+
+## Appendix B: Usage Examples
+### B1. Provide both versions (manual override)
+```bash
+curl -X POST "https://<host>/api/apps/upload" \
+  -F "token=<token>" \
+  -F "channel_key=<channel_key>" \
+  -F "file=@/path/to/file.dmg" \
+  -F "release_version=9.9.9" \
+  -F "build_version=999"
+```
+
+### B2. Provide release_version only
+```bash
+curl -X POST "https://<host>/api/apps/upload" \
+  -F "token=<token>" \
+  -F "channel_key=<channel_key>" \
+  -F "file=@/path/to/file.dmg" \
+  -F "release_version=8.8.8"
+```
+
+### B3. Provide build_version only
+```bash
+curl -X POST "https://<host>/api/apps/upload" \
+  -F "token=<token>" \
+  -F "channel_key=<channel_key>" \
+  -F "file=@/path/to/file.dmg" \
+  -F "build_version=12345"
+```
+
+### B4. Provide no version fields (parser fallback)
+```bash
+curl -X POST "https://<host>/api/apps/upload" \
+  -F "token=<token>" \
+  -F "channel_key=<channel_key>" \
+  -F "file=@/path/to/file.dmg"
+```
+
+### B5. Provide empty strings (treated as blank)
+```bash
+curl -X POST "https://<host>/api/apps/upload" \
+  -F "token=<token>" \
+  -F "channel_key=<channel_key>" \
+  -F "file=@/path/to/file.dmg" \
+  -F "release_version=" \
+  -F "build_version="
+```

@@ -1,0 +1,67 @@
+# Generated on Wed Jul 17 10:15:54 UTC 2024
+# USE SSL: false
+version: "3.8"
+
+x-restart-policy: &restart_policy
+  restart: unless-stopped
+
+x-defaults: &defaults
+  <<: *restart_policy
+  image: ghcr.io/tryzealot/zealot:5.3.7
+  depends_on:
+  - postgres
+  env_file: .env
+  volumes:
+  - zealot-uploads:/app/public/uploads
+  - zealot-backup:/app/public/backup
+  - zealot-log:/app/log
+  healthcheck:
+    test: [ "CMD-SHELL", "wget -q --spider --proxy=off localhost/users/sign_in || exit 1" ]
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "1g"
+      max-file: "10"
+      max-buffer-size: "4m"
+      mode: "non-blocking"
+
+services:
+  postgres:
+    <<: *restart_policy
+    image: postgres:14-alpine
+    volumes:
+    - zealot-postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: ze@l0t
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "postgres" ]
+  zealot:
+    <<: *defaults
+    ports:
+    - "3010:80"
+
+volumes:
+  zealot-uploads:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /Users/chaoxie/codes/zealot-data/uploads
+  zealot-backup:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /Users/chaoxie/codes/zealot-data/backup
+  zealot-log:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /Users/chaoxie/codes/zealot-data/log
+  zealot-postgres:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /Users/chaoxie/codes/zealot-data/postgres
